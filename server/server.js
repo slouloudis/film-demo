@@ -18,6 +18,18 @@ mongoose.connect(process.env.DATABASE_URL).then(() => console.log('DB connected!
 // root endpoint
 app.get('/', (req,res) => res.status(200).send(`Whoa, you've made it!`))
 
+// CRUD : CREATE
+
+app.post('/movies', async (req, res) => {
+  try {
+    const newMovie = await Movie.create(req.body);
+    res.status(200).json(newMovie)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+})
+
 // CRUD : READ
 
 app.get('/movies', async (req, res) => {
