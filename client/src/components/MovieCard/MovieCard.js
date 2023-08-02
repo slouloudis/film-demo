@@ -1,7 +1,8 @@
 import React from 'react'
 import './MovieCards.css'
+import Form from '../Form/Form'
 
-export default function MovieCard({movies, handleDelete}) {
+export default function MovieCard({movies, handleDelete, handleUpdateMovie}) {
 
   return (
     <div>
@@ -14,6 +15,7 @@ export default function MovieCard({movies, handleDelete}) {
                         <img src={movie.img_url} /> 
                         <p>{movie.director}, {movie.year}</p>
                     </div>
+                    <Form onSubmitFunc={handleUpdateMovie} movie={movie}/>
                 </div>
             )
         })}

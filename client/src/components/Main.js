@@ -1,61 +1,47 @@
 import React, {useState, useEffect} from 'react'
+//import {BrowserRouter, Route, Switch} from 'react-router-dom'
 import axios from 'axios'
 import MovieCard from './MovieCard/MovieCard'
 import Form from './Form/Form'
 
 
-
 export default function Main() {
-    const [formData, setFormData] = useState({
-        name: '',
-        img_url: '',
-        director: '',
-        year: ''
-    })
+  const [movies, setMovies] = useState([])
 
-    const [movies, setMovies] = useState([])
+  useEffect(() => {
+    getMovies()
+  }, [])
 
-    useEffect(() => {
-        getMovies()
-    },[])
+  const getMovies = async () => {
+    const res = await axios.get('http://localhost:4242/movies')
+    console.log(res.data)
+    setMovies(res.data)
+  }
 
 
-    // READ
-    async function getMovies() {
-        let API = 'http://localhost:4242/movies'
-        const result = await axios.get(API)
-        console.log(result.data)
-        setMovies(result.data)
-    }
+  const handleAddMovie = async (newMovieFormData) => {
+    const res = await axios.post('http://localhost:4242/movies', newMovieFormData)
+    console.log(res.data)
+    setMovies([...movies, res.data])
+  }
 
-    // Dealing with FORM DATA
-    const handleChange = (event) => {
-        setFormData({...formData, [event.target.name] : event.target.value})
-        console.log(formData)
-    }
+  const handleDelete = async (id) => {
+    await axios.delete(`http://localhost:4242/movies/${id}`)
+    getMovies()
+}
 
-    // CREATE
-    const handleAddMovie = async event => {
-        event.preventDefault()
-        const res = await axios.post('http://localhost:4242/movies', formData)
-        setMovies([...movies, res.data])
-    }
+  // update 
 
-    // delete Movie
-    const handleDelete = async (id) => {
-        console.log('clicked')
-        const res = await axios.delete(`http://localhost:4242/movies/${id}`)
-        console.log(res)
-        getMovies()
-    }
-
-    // talk about HTTP Request structure -> 
+  const handleUpdateMovie = async (movie) => {
+    await axios.put(`http://localhost:4242/movies/${movie._id}`, movie)
+    getMovies();
+  }
 
   return (
     <div>
-        <Form handleChange={handleChange} handleAddMovie={handleAddMovie}/>
-        <h3>This is my Main!</h3>
-        <MovieCard movies={movies} handleDelete={handleDelete}/>
+      <p>This is main!</p>
+      <Form onSubmitFunc={handleAddMovie}/>
+      <MovieCard movies={movies} handleDelete={handleDelete} handleUpdateMovie={handleUpdateMovie}/>
     </div>
   )
 }

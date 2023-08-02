@@ -47,6 +47,16 @@ app.post('/movies', async(request, response) => {
     }
 })
 
+// CRUD : Update
+app.put('/movies/:id', async (req, res) => {
+    try {
+        await Movie.findByIdAndUpdate(req.params.id, req.body);
+        res.status(204).send();
+    } catch (err) {
+        res.send(err)
+    }
+  });
+
 // CRUD: DELETE
 
 app.delete('/movies/:id' , async (request, response) => {
@@ -54,8 +64,8 @@ app.delete('/movies/:id' , async (request, response) => {
     try {
         const id = request.params.id;
         console.log(id)
-        const deletedMovie = await Movie.findByIdAndDelete(id)
-        response.status(200).json(deletedMovie)
+        await Movie.findByIdAndDelete(id)
+        response.status(204).send()
     } catch (err) {
         response.status(500).json(err)
     }
