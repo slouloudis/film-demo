@@ -9,10 +9,8 @@ const bp = require('body-parser')
 
 const app = express(); 
 app.use(cors())
-// the same as using body-parser
 app.use(bp.json())
-//app.use(express.json({strict: false}))
-//app.use(express.urlencoded())
+// app.use(bp.urlencoded()) // default is true, so it can accept anything? 
 
 // connect to mongoDB database
 mongoose.connect(process.env.DATABASE_URL).then(() => console.log('DB Connected'))
@@ -28,8 +26,9 @@ app.get('/', (request, response) => {
 // CRUD: READ:
 
 app.get('/movies', async (request,response) => {
+    console.log(request)
     try {
-        const movies = await Movie.find(request.query)
+        const movies = await Movie.find()
         response.status(200).json(movies)
     } catch (err) {
         console.log(err)
@@ -46,6 +45,26 @@ app.post('/movies', async(request, response) => {
         response.status(500).json(error)
     }
 })
+
+// UPDATE -> 
+
+app.put('/movies/:id', async  (request, response) => {
+    console.log(request.params.id);
+    try {
+        await Movie.findByIdAndUpdate(request.params.id, request.body);
+        response.status(204).send()
+    } catch (err) {
+        response.send(err)
+    }
+})
+
+// GET REQUEST  /movies/123,
+// app.get("/movies/:id", async (request, response) => {
+//     console.log(request);
+//     const theCat = await Movie.find({ _id: request.params.id });
+//     response.json(theCat);
+//   });
+
 
 // CRUD: DELETE
 

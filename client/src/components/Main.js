@@ -6,13 +6,6 @@ import Form from './Form/Form'
 
 
 export default function Main() {
-    const [formData, setFormData] = useState({
-        name: '',
-        img_url: '',
-        director: '',
-        year: ''
-    })
-
     const [movies, setMovies] = useState([])
 
     useEffect(() => {
@@ -28,16 +21,9 @@ export default function Main() {
         setMovies(result.data)
     }
 
-    // Dealing with FORM DATA
-    const handleChange = (event) => {
-        setFormData({...formData, [event.target.name] : event.target.value})
-        console.log(formData)
-    }
-
     // CREATE
-    const handleAddMovie = async event => {
-        event.preventDefault()
-        const res = await axios.post('http://localhost:4242/movies', formData)
+    const handleAddMovie = async newMovieFormData => {
+        const res = await axios.post('http://localhost:4242/movies', newMovieFormData)
         setMovies([...movies, res.data])
     }
 
@@ -49,13 +35,20 @@ export default function Main() {
         getMovies()
     }
 
+    // UPDATE
+
+    const handleUpdateMovie = async (movie) => {
+        await axios.put(`http://localhost:4242/movies/${movie._id}`, movie)
+        getMovies();
+    }
+
     // talk about HTTP Request structure -> 
 
   return (
     <div>
-        <Form handleChange={handleChange} handleAddMovie={handleAddMovie}/>
+        <Form onSubmitFunc={handleAddMovie}/>
         <h3>This is my Main!</h3>
-        <MovieCard movies={movies} handleDelete={handleDelete}/>
+        <MovieCard movies={movies} handleDelete={handleDelete} handleUpdateMovie={handleUpdateMovie}/>
     </div>
   )
 }
